@@ -13,16 +13,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "tb_users",uniqueConstraints = {@UniqueConstraint(name = "u_username", columnNames = {"username"})})
 public class User extends BaseModel {
 
-	@Column
+	@Column(columnDefinition="TEXT")
 	private String username;
 	
-	@Column
+	@Column(columnDefinition="TEXT")
 	@JsonIgnore
 	private String password;
 	
 	@OneToOne
 	@JoinColumn(name = "person_id" ,nullable = false)
 	private Person person;
+	
 
 	public Person getPerson() {
 		return person;
