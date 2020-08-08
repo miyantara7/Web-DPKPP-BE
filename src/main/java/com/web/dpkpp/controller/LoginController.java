@@ -10,14 +10,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.web.dpkpp.model.Login;
 import com.web.dpkpp.model.RegisterUser;
 import com.web.dpkpp.service.LoginService;
 
 @RestController
-@CrossOrigin
+@CrossOrigin("*")
+@RequestMapping("/api")
 public class LoginController {
 
 	@Autowired
@@ -47,7 +50,8 @@ public class LoginController {
 	@Transactional
 	public ResponseEntity<?> register(@RequestBody RegisterUser user) throws Exception {
 		try {
-			return ResponseEntity.ok(userDetailService.save(user));
+			userDetailService.save(user);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

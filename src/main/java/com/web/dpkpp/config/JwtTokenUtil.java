@@ -21,18 +21,16 @@ public class JwtTokenUtil implements Serializable {
 
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-	@Value("${webcoba.app.jwtSecret}")
+	@Value("${dpkpp.app.jwtSecret}")
 	private String secret;
 	
-	@Value("${webcoba.app.jwtExpirationMs}")
+	@Value("${dpkpp.app.jwtExpirationMs}")
 	private int jwtExpirationMs;
 
-	//retrieve username from jwt token
 	public String getUsernameFromToken(String token)throws Exception {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
-	//retrieve expiration date from jwt token
 	public Date getExpirationDateFromToken(String token)throws Exception  {
 		return getClaimFromToken(token, Claims::getExpiration);
 	}
@@ -41,18 +39,16 @@ public class JwtTokenUtil implements Serializable {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
-    //for retrieveing any information from token we will need the secret key
+	
 	private Claims getAllClaimsFromToken(String token) throws Exception {
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 
-	//check if the token has expired
 	private Boolean isTokenExpired(String token) throws Exception{
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}
 
-	//generate token for user
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, userDetails.getUsername());

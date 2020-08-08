@@ -1,9 +1,12 @@
 package com.web.dpkpp.service;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.web.dpkpp.config.JwtTokenUtil;
 import com.web.dpkpp.dao.LoginDao;
+import com.web.dpkpp.dao.PersonDao;
 import com.web.dpkpp.dao.UserDao;
 import com.web.dpkpp.model.Login;
 import com.web.dpkpp.model.LoginResponse;
@@ -42,6 +46,9 @@ public class LoginService implements UserDetailsService {
 	@Autowired
 	private LoginDao loginDao;
 
+	@Autowired
+	private PersonService personService;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userDao.findByUsername(username);
@@ -52,10 +59,10 @@ public class LoginService implements UserDetailsService {
 	}
 	
 	public LoginResponse loginWeb(Login authenticationRequest) throws Exception{
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
 		final Users userDetails = (Users) loadUserByUsername(authenticationRequest.getUsername());
 		
+		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
 		final String token = jwtTokenUtil.generateToken(userDetails);
 		
 		return new LoginResponse(token,userDetails.getUser());
@@ -79,17 +86,18 @@ public class LoginService implements UserDetailsService {
 		}
 	}
 	
-	public User save(RegisterUser user) throws Exception {
+	public void save(RegisterUser user) throws Exception {
 		User newUser = new User();
 		newUser.setUsername(user.getUsername());
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+		newUser.setPerson(user.getPerson());
 		try {
 			if(loginDao.getUserById(newUser.getUsername())==null) {
+				personService.save(newUser.getPerson());
 				loginDao.save(newUser);
-				throw new Exception("Register Success !") ;
 			}else {
 				throw new Exception("Username is exist !") ;
-			}	
+			}
 		} catch (Exception e) {
 			throw e;
 		}	
