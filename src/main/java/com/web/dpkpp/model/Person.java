@@ -29,14 +29,12 @@ public class Person extends BaseModel{
 	@Column(columnDefinition="TEXT")
 	private String fileName;
 	@OneToOne
-	@JoinColumn(name = "unit_listing_id")
-	private UnitListing unit;
-
-	public UnitListing getUnit() {
+	@JoinColumn(name = "unit_id")
+	private Unit unit;
+	public Unit getUnit() {
 		return unit;
 	}
-
-	public void setUnit(UnitListing unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
 	public String getFileName() {

@@ -36,7 +36,7 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws Exception  {
-		final Claims claims = getAllClaimsFromToken(token);
+		Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
 	

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.dpkpp.helper.SessionHelper;
 import com.web.dpkpp.service.LoginService;
 
 @RestController
@@ -18,7 +19,7 @@ public class HelloWorldController {
 	@RequestMapping({ "/hello" })
 	public ResponseEntity<?> firstPage() {
 		try {
-			return new ResponseEntity<>("Berhasil ", HttpStatus.OK);
+			return new ResponseEntity<>(SessionHelper.getPerson().getName(), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.web.dpkpp.model.Users;
 import com.web.dpkpp.service.LoginService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -40,6 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			jwtToken = requestTokenHeader.substring(7);
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+				System.out.println(username);
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get JWT Token");
 			} catch (ExpiredJwtException e) {
@@ -54,7 +55,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+			Users userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 			try {
 				if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
@@ -63,6 +64,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 					usernamePasswordAuthenticationToken
 							.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+					
+					((Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setToken(jwtToken);
+					((Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setPerson(userDetails.getPerson());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
