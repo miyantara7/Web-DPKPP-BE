@@ -1,6 +1,10 @@
 package com.web.dpkpp.service;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -8,6 +12,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -17,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.web.dpkpp.config.JwtTokenUtil;
 import com.web.dpkpp.dao.LoginDao;
@@ -48,6 +54,9 @@ public class LoginService implements UserDetailsService {
 
 	@Autowired
 	private PersonService personService;
+	
+	@Value("${upload.path}")
+    private String path;
 	
 	@Override
 	public Users loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -86,15 +95,29 @@ public class LoginService implements UserDetailsService {
 		}
 	}
 	
-	public void save(RegisterUser user) throws Exception {
+	public void save(RegisterUser user,MultipartFile file) throws Exception {
 		User newUser = new User();
 		newUser.setUsername(user.getUsername());
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
 		newUser.setPerson(user.getPerson());
+		String paths = path+"/photo";
+		File files = new File(paths);
 		try {
 			if(loginDao.getUserById(newUser.getUsername())==null) {
 				personService.save(newUser.getPerson());
-				loginDao.save(newUser);
+				loginDao.save(newUser);		
+				if (!Files.exists(Paths.get(path))) {
+			        if (!files.mkdirs()) {
+			            System.out.println("Failed to create directory!");
+			        }
+				}
+				
+		        if(!file.isEmpty()) {
+			        String fileName = file.getOriginalFilename();
+		            InputStream is = file.getInputStream();
+		            Files.copy(is, Paths.get(path + newUser.getPerson().getId()+"_"+fileName),
+		                    StandardCopyOption.REPLACE_EXISTING);
+		        }
 			}else {
 				throw new Exception("Username is exist !") ;
 			}

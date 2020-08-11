@@ -48,9 +48,9 @@ public class LoginController {
 	
 	@PostMapping("/register")
 	@Transactional
-	public ResponseEntity<?> register(@RequestBody RegisterUser user) throws Exception {
+	public ResponseEntity<?> register(@RequestBody RegisterUser user, MultipartFile file) throws Exception {
 		try {
-			userDetailService.save(user);
+			userDetailService.save(user,file);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
