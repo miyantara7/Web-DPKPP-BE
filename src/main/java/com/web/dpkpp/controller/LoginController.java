@@ -40,8 +40,9 @@ public class LoginController {
 	@Transactional
 	public ResponseEntity<?> loginMobile(@RequestBody Login login) throws Exception {
 		try {
-			return ResponseEntity.ok(userDetailService.loginWeb(login));
+			return ResponseEntity.ok(userDetailService.loginMobile(login));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -56,6 +57,16 @@ public class LoginController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	
+	}
+	
+	@PostMapping("/logout-mobile")
+	@Transactional
+	public ResponseEntity<?> logOutMobile(@RequestBody Login login) throws Exception {
+		try {
+			return ResponseEntity.ok(userDetailService.logOutMobile(login));
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 

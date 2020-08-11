@@ -28,6 +28,7 @@ import com.web.dpkpp.config.JwtTokenUtil;
 import com.web.dpkpp.dao.LoginDao;
 import com.web.dpkpp.dao.PersonDao;
 import com.web.dpkpp.dao.UserDao;
+import com.web.dpkpp.dao.UserDaoHibernate;
 import com.web.dpkpp.model.Login;
 import com.web.dpkpp.model.LoginResponse;
 import com.web.dpkpp.model.RegisterUser;
@@ -39,6 +40,9 @@ public class LoginService implements UserDetailsService {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private UserDaoHibernate userDaoHibernate;
 
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
@@ -67,7 +71,22 @@ public class LoginService implements UserDetailsService {
 		return new com.web.dpkpp.model.Users(user,user.getId(),user.getUsername(), user.getPassword(),new ArrayList<>(),user.getPerson());
 	}
 	
+	public void checkUserLogin(Login login) throws Exception{
+		String username = login.getUsername();
+		User user = userDaoHibernate.getUserByUsername(username);
+		try {
+			if (user.isActive() == true) {
+				throw new Exception("User has been login !");
+			} 
+			user.setActive(true);
+			userDaoHibernate.edit(user);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	public LoginResponse loginWeb(Login authenticationRequest) throws Exception{
+		
 		final Users userDetails = (Users) loadUserByUsername(authenticationRequest.getUsername());
 		
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -77,14 +96,38 @@ public class LoginService implements UserDetailsService {
 		return new LoginResponse(token,userDetails.getUser());
 	}
 	
-	public UserDetails getUserByIdMobile(String username) throws Exception {
-		User user = userDao.findByUsername(username);
-		if (user == null) {
-			throw new UsernameNotFoundException("User not found with username: " + username);
-		}
-		return new com.web.dpkpp.model.Users(user,user.getId(),user.getUsername(), user.getPassword(),new ArrayList<>(),user.getPerson());
-	}
+	public Object loginMobile(Login authenticationRequest) throws Exception{
+		
+		final Users userDetails = (Users) loadUserByUsername(authenticationRequest.getUsername());
+		
+		checkUserLogin(authenticationRequest);
+		
+		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
+		final String token = jwtTokenUtil.generateToken(userDetails);
+		
+		return new LoginResponse(token,userDetails.getUser());	
+	}
+	
+	public Object logOutMobile(Login login) throws Exception{
+		String username = login.getUsername();
+		User user = userDaoHibernate.getUserByUsername(username);
+		try {
+			if (user == null) {
+				throw new UsernameNotFoundException("User not found with username: " + username);
+			}
+
+			if (user.isActive() != true) {
+				throw new Exception("Your not login !");
+			}
+			user.setActive(false);
+			userDaoHibernate.edit(user);
+			throw new Exception("Logout Successfull !");
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	private void authenticate(String username, String password) throws Exception {
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -103,7 +146,7 @@ public class LoginService implements UserDetailsService {
 		String paths = path+"/photo";
 		File files = new File(paths);
 		try {
-			if(loginDao.getUserById(newUser.getUsername())==null) {
+			if(userDaoHibernate.getUserByUsername(newUser.getUsername())==null) {
 				personService.save(newUser.getPerson());
 				loginDao.save(newUser);		
 				if (!Files.exists(Paths.get(path))) {

@@ -24,6 +24,16 @@ public class User extends BaseModel {
 	@JoinColumn(name = "person_id" ,nullable = false)
 	private Person person;
 	
+	@Column(nullable = true)
+	private boolean isActive;	
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	public Person getPerson() {
 		return person;
