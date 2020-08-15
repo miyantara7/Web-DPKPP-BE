@@ -30,7 +30,7 @@ public class PersonController {
 	@Transactional
 	public ResponseEntity<?> editPerson(MultipartFile file,String person) throws Exception {
 		try {
-			personService.edit(file,person);
+			personService.editPerson(file,person);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

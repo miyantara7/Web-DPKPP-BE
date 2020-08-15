@@ -63,15 +63,15 @@ public class LkhService extends BaseService  {
 		String files = Base64.getEncoder().encodeToString(bytes);
 		Lkh templkh = lkhDao.getById(lkh.getId());
 		String nameFile = templkh.getFileName();
-		if (templkh != null) {
-			templkh.setFile(files);
-			templkh.setTypeFile(file.getContentType());
-			templkh.setFileName(file.getOriginalFilename());
-			templkh.setStatus(true);
-			templkh.setPerson(SessionHelper.getPerson());
-			lkhDao.edit(templkh);
+		try {
+			if (templkh != null) {
+				templkh.setFile(files);
+				templkh.setTypeFile(file.getContentType());
+				templkh.setFileName(file.getOriginalFilename());
+				templkh.setStatus(true);
+				templkh.setPerson(SessionHelper.getPerson());
+				lkhDao.edit(templkh);
 
-			try {
 				File fileDel = new File(path + "/" + templkh.getId() + "_" + nameFile);
 				if (fileDel.delete()) {
 					InputStream is = file.getInputStream();
@@ -80,9 +80,9 @@ public class LkhService extends BaseService  {
 					throw new Exception("Update file " + nameFile + " Success");
 				} else
 					throw new Exception("File doesn't exist in directory");
-			} catch (Exception e) {
-				throw e;
 			}
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 }

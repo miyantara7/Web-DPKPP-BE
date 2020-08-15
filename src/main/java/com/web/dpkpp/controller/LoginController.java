@@ -32,6 +32,7 @@ public class LoginController {
 		try {
 			return ResponseEntity.ok(userDetailService.loginWeb(authenticationRequest));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -49,7 +50,7 @@ public class LoginController {
 	
 	@PostMapping("/register")
 	@Transactional
-	public ResponseEntity<?> register(@RequestBody RegisterUser user, MultipartFile file) throws Exception {
+	public ResponseEntity<?> register(String user, MultipartFile file) throws Exception {
 		try {
 			userDetailService.save(user,file);
 			return new ResponseEntity<>("Success", HttpStatus.OK);

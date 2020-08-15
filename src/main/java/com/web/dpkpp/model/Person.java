@@ -3,11 +3,10 @@ package com.web.dpkpp.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "tb_person",uniqueConstraints = 
@@ -19,10 +18,8 @@ public class Person extends BaseModel{
 	@Column(columnDefinition="TEXT")
 	private String nip;
 	@Column(columnDefinition="TEXT")
-	private String position;
-	@Column(columnDefinition="TEXT")
 	private String gender;
-	@Column(columnDefinition="TEXT")
+	@Transient
 	private String photo;
 	@Column(columnDefinition="TEXT")
 	private String typeFile;
@@ -30,11 +27,11 @@ public class Person extends BaseModel{
 	private String fileName;
 	@OneToOne
 	@JoinColumn(name = "unit_id")
-	private Unit unit;
-	public Unit getUnit() {
+	private UnitPosition unit;
+	public UnitPosition getUnit() {
 		return unit;
 	}
-	public void setUnit(Unit unit) {
+	public void setUnit(UnitPosition unit) {
 		this.unit = unit;
 	}
 	public String getFileName() {
@@ -66,12 +63,6 @@ public class Person extends BaseModel{
 	}
 	public void setNip(String nip) {
 		this.nip = nip;
-	}
-	public String getPosition() {
-		return position;
-	}
-	public void setPosition(String position) {
-		this.position = position;
 	}
 	public String getGender() {
 		return gender;

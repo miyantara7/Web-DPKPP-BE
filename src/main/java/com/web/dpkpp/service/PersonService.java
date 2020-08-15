@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.web.dpkpp.dao.PersonDao;
 import com.web.dpkpp.model.Person;
 import com.web.dpkpp.model.Unit;
+import com.web.dpkpp.model.UnitPosition;
 
 @Service
 @Transactional
@@ -34,28 +35,33 @@ public class PersonService extends BaseService  {
 		}	
 	}
 	
-	public void edit(MultipartFile file,String persons) throws Exception{
+	public void editPerson(MultipartFile file,String persons) throws Exception{
 		Person person = new Person();
 	   
 		person = super.readValue(persons, Person.class);
 		byte[] bytes = Base64.getEncoder().encode(file.getBytes());
 		String photo = Base64.getEncoder().encodeToString(bytes);
-		person.setPhoto(photo);
 		person.setTypeFile(file.getContentType());
 		person.setFileName(file.getOriginalFilename());
 		try {
 			Person tempPerson = personDao.getPersonById(person.getId());
 			if(tempPerson!=null) {
-				Unit unit = person.getUnit();
+				UnitPosition unit = person.getUnit();
 				tempPerson.setName(person.getName());
-				tempPerson.setPhoto(person.getPhoto());
-				tempPerson.setPosition(person.getPosition());
 				tempPerson.setTypeFile(person.getTypeFile());
 				tempPerson.setGender(person.getGender());
 				tempPerson.setFileName(person.getFileName());
 				tempPerson.setUnit(unit);
-				personDao.edit(tempPerson);
+				edit(tempPerson);
 			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void edit(Person person) throws Exception{
+		try {
+			personDao.edit(person);
 		} catch (Exception e) {
 			throw e;
 		}

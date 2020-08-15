@@ -22,4 +22,9 @@ public class Constants {
 	public static final String SEKSI_PERENCANAAN = "SPRC";
 	public static final String SEKSI_PELAKSANAAN = "SPLKS";
 	public static final String SEKSI_PENGAWASAN = "SPWS";
+	
+	
+	//
+	public static final String LOGOUT = "LOGOUT";
+	public static final String LOGIN = "LOGIN";
 }
