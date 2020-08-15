@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.web.dpkpp.model.User;
 
 @Repository
-public class LoginDao extends BaseDao implements BaseMasterDao {
+public class LoginDao extends BaseDao {
 
 	@SuppressWarnings("unchecked")
 	public <T> Object getUserById(String username){
@@ -18,25 +18,6 @@ public class LoginDao extends BaseDao implements BaseMasterDao {
 				.getResultList();
 		
 		return !listUser.isEmpty() ? listUser.get(0) : null;
-	}
-
-	@Override
-	public <T> void save(T entity) {
-		em.persist(entity);	
-	}
-
-	@Override
-	public <T> void edit(T entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public <T> void delete(T entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
+	}	
 
 }
