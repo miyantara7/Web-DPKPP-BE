@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.web.dpkpp.model.User;
 
 @Repository
-public class UserDaoHibernate extends BaseDao implements BaseMasterDao {
+public class UserDaoHibernate extends BaseDao {
 
 	@SuppressWarnings("unchecked")
 	public <T> User getUserByUsername(String username){
@@ -17,22 +17,4 @@ public class UserDaoHibernate extends BaseDao implements BaseMasterDao {
 		
 		return !listUser.isEmpty() ? listUser.get(0) : null;
 	}
-	
-	@Override
-	public <T> void save(T entity) {
-		em.merge(entity);
-	}
-
-	@Override
-	public <T> void edit(T entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public <T> void delete(T entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
