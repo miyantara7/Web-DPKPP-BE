@@ -8,10 +8,10 @@
 		<version>2.3.2.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.coba</groupId>
-	<artifactId>WebCoba</artifactId>
+	<groupId>com.web.dpkpp</groupId>
+	<artifactId>WebDpkpp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>WebCoba</name>
+	<name>WebDpkpp</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
